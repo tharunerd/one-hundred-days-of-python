@@ -14,8 +14,7 @@ def main():
     greet_user(user_name)
     
     num1 = int(input("Enter the first number: "))
-    num2 = int(input("Enter the second number: "))
-    
+    num2 = int(input("Enter the second number: "))    
     result = calculate_sum(num1, num2)
     print(f"The sum of {num1} and {num2} is: {result}")
 if __name__ == "__main__":
