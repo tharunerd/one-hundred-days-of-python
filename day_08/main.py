@@ -1,5 +1,6 @@
 # Caesar cipher
 
+
 def caesar(text, shift, direction):
     result = ""
     for char in text:

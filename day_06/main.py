@@ -19,5 +19,6 @@ def main():
     print(f"The sum of {num1} and {num2} is: {result}")
 if __name__ == "__main__":
     main()
+    
 # This code defines a simple Python program that demonstrates how to define and call functions.
 # It includes a function to greet the user and another function to calculate the sum of two numbers
