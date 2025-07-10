@@ -1,35 +1,4 @@
-# # # from some import some_variable
-# # # print (some_variable)
-# #
-# #
-# # from turtle import Turtle, Screen
-# #
-# # tharun = Turtle()
-# # print(tharun)
-# # tharun.shape("turtle")
-# # tharun.color("teal")
-# # tharun.forward(100)
-# # tharun.right(50)
-# # # tharun.backward
-# #
-# # my_screen = Screen()
-# # print(my_screen.canvwidth)
-# # print (my_screen.canvheight)
-# # my_screen.exitonclick()
-# #import prettytable
-#
-# from prettytable import PrettyTable
-#
-# create_table = PrettyTable()
-# create_table.add_column("shape",["circle","triangle","square"])
-# create_table.add_column("sides",[ "0","3","4"])
-# create_table.allign = "l"
-# print(create_table)
-#
-#
-#
-#
-#
+# File: day_16/main.py
 from menu import Menu
 from coffee_maker import CoffeeMaker
 from money_machine import MoneyMachine
