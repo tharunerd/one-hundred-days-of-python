@@ -1,4 +1,4 @@
-actions to be taken :
+actions to consider :
 
 1. move the turtle with keypress
 2. create and move the cars
@@ -71,6 +71,6 @@ actions to be taken :
 
 ### Instructions
 ```bash
-git clone 
-cd 
+git clone https://github.com/tharunerd/one-hundred-days-of-python.git
+cd day_23
 python main.py
