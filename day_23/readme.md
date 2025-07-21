@@ -1,22 +1,10 @@
+actions to be taken :
 
-# 🐢 Turtle Crossing Game
-
-Inspired by the classic game **Frogger**, the goal is to guide a turtle across a busy road while avoiding fast-moving cars. The game gets more challenging with each level.
-
----
-
-## 📂 Project Structure
-
-```
-
-turtle-crossing/
-│
-├── main.py           # Game loop and core logic
-├── player.py         # Player (turtle) class and movement
-├── car\_manager.py    # Cars: creation, movement, and difficulty scaling
-├── scoreboard.py     # Score/level display and game over message
-
-````
+1. move the turtle with keypress
+2. create and move the cars
+3. detect the collision of turtle with car
+4. detect when turtle reaches the other side
+5. create scoreboard
 
 ---
 
@@ -83,24 +71,6 @@ turtle-crossing/
 
 ### Instructions
 ```bash
-cd turtle-crossing-game
+git clone 
+cd 
 python main.py
-````
-
-> Press the **Up Arrow** key to move the turtle.
-
----
-
-## 🚀 Future Ideas
-
-* Add lives or retries
-* Track and save high score
-* Add sound effects
-* Add animation or smoother car transitions
-
----
----
-
-Feel free to star ⭐ the repo, fork it, or suggest improvements!
-
-```
