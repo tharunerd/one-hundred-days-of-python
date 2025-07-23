@@ -1,5 +1,7 @@
 import turtle
 
+from wheel.macosx_libfile import segment_command_fields
+
 starting_positions = [(0, 0), (-20, 0), (-40, 0)]  # ✅ Corrected positions
 UP = 90
 DOWN = 270
@@ -52,3 +54,9 @@ class Snake :
         if self.head.heading() != RIGHT:
             self.head.setheading(LEFT)
 
+    def reset(self):
+        for seg in self.segments:
+            seg.goto(1000,1000)
+        self.segments.clear()
+        self.create_snake()
+        self.head = self.segments[0]
