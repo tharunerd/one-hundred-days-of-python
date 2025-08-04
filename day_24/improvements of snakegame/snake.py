@@ -1,6 +1,6 @@
 import turtle
 
-
+from wheel.macosx_libfile import segment_command_fields
 
 starting_positions = [(0, 0), (-20, 0), (-40, 0)]  # ✅ Corrected positions
 UP = 90
