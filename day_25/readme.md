@@ -77,8 +77,14 @@ When you exit, it shows the states you missed and saves them to a file
    ```bash
    pip install pandas
    ```
+2. Go to the project file 
 
-2. Run the script:
+    ```bash
+    -> cd weather report
+    -> cd squirrel count
+    -> cd US states 
+    ```    
+3. Run the script:
 
    ```bash
    python main.py
