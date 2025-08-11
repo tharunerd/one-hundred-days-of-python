@@ -24,7 +24,8 @@ It’s a **Local Password Manager** that allows you to securely store, search, a
 ```
 📁 Local Password Manager
 │── main.py           # Main application script
-│── data.json         # Local storage for saved passwords
+│── data.json         # Local storage for saved passwords (added to gitignore)
+│── .gitignore        # add data.txt file
 │── logo.png          # Application logo for GUI
 │── README.md         # Project documentation
 ```
