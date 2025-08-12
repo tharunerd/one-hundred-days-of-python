@@ -1,0 +1,10 @@
+{
+    "google": {
+        "email": "your_email@example.com",
+        "password": "%5az7$Pa2Xg"
+    },
+    "facebook": {
+        "email": "your_email@example.com",
+        "password": "book123"
+    }
+}
