@@ -2,6 +2,7 @@ import random
 import tkinter
 from tkinter import messagebox
 import pyperclip
+from tkinter import Tk, Label, PhotoImage
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():

@@ -48,9 +48,6 @@ It’s a **Local Password Manager** that allows you to securely store, search, a
    python main.py
    ```
 
-## 📷 Preview
-
-*(Optional: Add screenshots or GIFs of your app here)*
 
 ## ⚠ Disclaimer
 

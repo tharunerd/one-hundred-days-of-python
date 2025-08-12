@@ -54,6 +54,13 @@ def save_password():
     with open("data.json", "w") as file:
         json.dump(data, file, indent=4)
 
+    # ✅ NEW FEATURE: Show confirmation popup after saving
+    messagebox.showinfo(
+        title="Saved Successfully",
+        message=f"✅ Saved details for {website}\n\nEmail: {email}\nPassword: {password}\n\nPassword copied to clipboard!"
+    )
+    pyperclip.copy(password)
+
     website_entry.delete(0, tk.END)
     password_entry.delete(0, tk.END)
 
