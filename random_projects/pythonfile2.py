@@ -5,3 +5,4 @@ print("e" in li_str)
 print("a" not in li_str)
 
 print(li_str)
+print(type(mixed))

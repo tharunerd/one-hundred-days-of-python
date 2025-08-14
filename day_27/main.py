@@ -1,3 +1,6 @@
+# this is a simple GUI program using tkinter
+
+
 from tkinter import *
 
 
