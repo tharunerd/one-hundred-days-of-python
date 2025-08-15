@@ -28,7 +28,7 @@ I even hosted it on **PythonAnywhere** so it runs daily in the cloud — no need
   ├── letter\_2.txt
   └── letter\_3.txt
 
-due to personal info added in my .csv file I have added it to .gitignore along with my .env file which conatins my email and its passowrd
+due to personal info added in my .csv file I have added it to .gitignore along with my .env file which conatins my email and its password
 ````
 
 ---
