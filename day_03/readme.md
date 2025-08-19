@@ -39,6 +39,7 @@ Then: swim or wait
 Then: choose a door (red, yellow, blue)
 
 ✅ Key Takeaways
+
 Conditional logic is the backbone of decision-making in programs.
 
 Use and, or, not to combine multiple conditions.
