@@ -3,6 +3,7 @@
 This is my **Day 32** project from the **100 Days of Python Course by Angela Yu**.  
 It’s a **Python automation tool** that sends **personalized birthday emails** to people from a `.csv` file, using pre-made letter templates.  
 I even hosted it on **PythonAnywhere** so it runs daily in the cloud — no need to run it manually! 🚀
+A step into automating scripts.
 
 ---
 
