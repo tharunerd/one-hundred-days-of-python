@@ -37,3 +37,6 @@ a, b = b, a
 
 print("a =", a)
 print("b =", b)
+
+
+To run just clone the repo or copy the main.py file contents 
