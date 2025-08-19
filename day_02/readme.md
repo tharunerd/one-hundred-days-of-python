@@ -2,7 +2,7 @@
 
 ## 📌 Topics Covered
 
-- Python primitive data types:
+- Python primitive data types :
   - `str` (String)
   - `int` (Integer)
   - `float` (Floating point numbers)
