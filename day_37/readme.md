@@ -1,12 +1,14 @@
 # 🌱 Day 37 – Habit Tracker
 
-This project is a **Habit Tracker** built using **Python** and the **Pixela API**, where you can create, track, and visualize your daily habits in the form of a graph 📊. It’s a great way to stay consistent and accountable in building positive routines!
+This project is a **Habit Tracker** built using **Python** and the **Pixela API**, where you can create, track, and visualize your daily habits in the form of a graph 📊. It’s a great way to stay consistent and accountable in building positive routines! 
+
+ANd all the actions relate dto API like creation, updation, deleting and logging happened via CLI(aommand line interface)
 
 ---
 
 ## 🚀 Features
 
-* 📌 **Create a new user** on Pixela
+* 📌 **Create a new user** on Pixela 
 * 🟢 **Create a graph** for tracking habits (exercise, coding, reading, etc.)
 * ➕ **Add daily progress (pixels)** to track habits visually
 * ✏️ **Update entries** if you make changes
