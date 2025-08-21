@@ -42,3 +42,13 @@ Generate personalized letters for a list of invited guests using a template and 
 **File Name:** `letter_for_Tharun.txt`
 
 **Content:**
+```
+Dear [name],
+
+You are invited to my birthday this Saturday.
+
+Hope you can make it!
+
+regrads,
+tharun
+```
