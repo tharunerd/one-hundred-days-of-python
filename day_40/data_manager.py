@@ -1,42 +1,62 @@
 import os
 import requests
-from requests.auth import HTTPBasicAuth
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
-
-SHEETY_PRICES_ENDPOINT = YOUR ENDPOINT HERE
-
 
 class DataManager:
+    """
+    Handles Google Sheets via Sheety.
+    Requires:
+      - SHEETY_PRICES_ENDPOINT (e.g., .../prices)
+      - SHEETY_USERS_ENDPOINT  (e.g., .../users)
+      - SHEETY_TOKEN (optional Bearer token)
+    """
 
     def __init__(self):
-        self._user = os.environ["SHEETY_USRERNAME"]
-        self._password = os.environ["SHEETY_PASSWORD"]
-        self._authorization = HTTPBasicAuth(self._user, self._password)
-        self.destination_data = {}
+        self.prices_endpoint = os.getenv("SHEETY_PRICES_ENDPOINT")
+        self.users_endpoint = os.getenv("SHEETY_USERS_ENDPOINT")
+        token = os.getenv("SHEETY_TOKEN")
+        self.headers = {"Authorization": f"Bearer {token}"} if token else {}
 
-    def get_destination_data(self):
-        # Use the Sheety API to GET all the data in that sheet and print it out.
-        response = requests.get(url=SHEETY_PRICES_ENDPOINT)
-        data = response.json()
-        self.destination_data = data["prices"]
-        # Try importing pretty print and printing the data out again using pprint() to see it formatted.
-        # pprint(data)
-        return self.destination_data
+        if not self.prices_endpoint or not self.users_endpoint:
+            raise ValueError("Missing Sheety endpoints. Set SHEETY_PRICES_ENDPOINT and SHEETY_USERS_ENDPOINT in .env")
 
-    # In the DataManager Class make a PUT request and use the row id from sheet_data
-    # to update the Google Sheet with the IATA codes. (Do this using code).
-    def update_destination_codes(self):
-        for city in self.destination_data:
-            new_data = {
-                "price": {
-                    "iataCode": city["iataCode"]
-                }
-            }
-            response = requests.put(
-                url=f"{SHEETY_PRICES_ENDPOINT}/{city['id']}",
-                json=new_data
-            )
-            print(response.text)
+    def get_destinations(self):
+        r = requests.get(self.prices_endpoint, headers=self.headers, timeout=20)
+        r.raise_for_status()
+        # Sheety typically wraps with resource name; infer it:
+        data = r.json()
+        # Use first key
+        resource = next(iter(data))
+        return data[resource]
+
+    def update_iata_code(self, row_id: int, iata_code: str):
+        url = f"{self.prices_endpoint}/{row_id}"
+        # Infer singular name: e.g. prices -> price
+        singular = self._infer_singular(self.prices_endpoint)
+        body = {singular: {"iataCode": iata_code}}
+        r = requests.put(url, json=body, headers=self.headers, timeout=20)
+        r.raise_for_status()
+        return r.json()
+
+    def get_users(self):
+        r = requests.get(self.users_endpoint, headers=self.headers, timeout=20)
+        r.raise_for_status()
+        data = r.json()
+        resource = next(iter(data))
+        return data[resource]
+
+    def add_user(self, first: str, last: str, email: str):
+        singular = self._infer_singular(self.users_endpoint)  # e.g. users -> user
+        body = {singular: {"firstName": first, "lastName": last, "email": email}}
+        r = requests.post(self.users_endpoint, json=body, headers=self.headers, timeout=20)
+        r.raise_for_status()
+        return r.json()
+
+    @staticmethod
+    def _infer_singular(url: str) -> str:
+        # crude but effective for .../prices and .../users
+        if url.endswith("/prices"):
+            return "price"
+        if url.endswith("/users"):
+            return "user"
+        # fallback: drop trailing 's'
+        return url.rstrip("/").split("/")[-1].rstrip("s")

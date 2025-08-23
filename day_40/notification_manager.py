@@ -1,49 +1,41 @@
 import os
-from twilio.rest import Client
-
-# Using a .env file to retrieve the phone numbers and tokens.
+import smtplib
+from email.mime.text import MIMEText
 
 class NotificationManager:
+    """
+    Sends emails via SMTP. If env vars are missing, prints the message.
+    Requires:
+      - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL
+    """
 
     def __init__(self):
-        self.client = Client(os.environ['TWILIO_SID'], os.environ["TWILIO_AUTH_TOKEN"])
+        self.smtp_host = os.getenv("SMTP_HOST")
+        self.smtp_port = int(os.getenv("SMTP_PORT", "587"))
+        self.user = os.getenv("SMTP_USER")
+        self.password = os.getenv("SMTP_PASS")
+        self.from_email = os.getenv("FROM_EMAIL")
 
-    def send_sms(self, message_body):
-        """
-        Sends an SMS message through the Twilio API.
-        This function takes a message body as input and uses the Twilio API to send an SMS from
-        a predefined virtual number (provided by Twilio) to your own "verified" number.
-        It logs the unique SID (Session ID) of the message, which can be used to
-        verify that the message was sent successfully.
+        self.enabled = all([self.smtp_host, self.smtp_port, self.user, self.password, self.from_email])
 
-        Parameters:
-        message_body (str): The text content of the SMS message to be sent.
+    def send_emails(self, emails, message: str):
+        if not emails:
+            print("ℹ️ No recipient emails provided.")
+            return
 
-        Returns:
-        None
+        if not self.enabled:
+            print("[Email (dry-run)] Would send to:", ", ".join(emails))
+            print(message)
+            return
 
-        Notes:
-        - Ensure that `TWILIO_VIRTUAL_NUMBER` and `TWILIO_VERIFIED_NUMBER` are correctly set up in
-        your environment (.env file) and correspond with numbers registered and verified in your
-        Twilio account.
-        - The Twilio client (`self.client`) should be initialized and authenticated with your
-        Twilio account credentials prior to using this function when the Notification Manager gets
-        initialized.
-        """
-        message = self.client.messages.create(
-            from_=os.environ["TWILIO_VIRTUAL_NUMBER"],
-            body=message_body,
-            to=os.environ["TWILIO_VIRTUAL_NUMBER"]
-        )
-        # Prints if successfully sent.
-        print(message.sid)
+        msg = MIMEText(message, "plain")
+        msg["Subject"] = "✈️ New Flight Deal!"
+        msg["From"] = self.from_email
 
-    # Is SMS not working for you or prefer whatsapp? Connect to the WhatsApp Sandbox!
-    # https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn
-    def send_whatsapp(self, message_body):
-        message = self.client.messages.create(
-            from_=f'whatsapp:{os.environ["TWILIO_WHATSAPP_NUMBER"]}',
-            body=message_body,
-            to=f'whatsapp:{os.environ["TWILIO_VERIFIED_NUMBER"]}'
-        )
-        print(message.sid)
+        with smtplib.SMTP(self.smtp_host, self.smtp_port) as conn:
+            conn.starttls()
+            conn.login(self.user, self.password)
+            for email in emails:
+                msg["To"] = email
+                conn.sendmail(self.from_email, email, msg.as_string())
+        print(f"📧 Sent email to {len(emails)} user(s).")

@@ -1,62 +1,101 @@
-import time
-from datetime import datetime, timedelta
+import os
+from dotenv import load_dotenv
 from data_manager import DataManager
 from flight_search import FlightSearch
-from flight_data import find_cheapest_flight
 from notification_manager import NotificationManager
 
-# ==================== Set up the Flight Search ====================
+def prompt_new_user(data_manager: DataManager):
+    print("Welcome to Flight Club.")
+    print("We find the best flight deals and email you.")
+    join = input("Do you want to join the club? (y/n): ").strip().lower()
+    if join == "y":
+        first = input("First name: ").strip()
+        last = input("Last name: ").strip()
+        email = input("Email: ").strip()
+        if first and last and email:
+            data_manager.add_user(first, last, email)
+            print("🎉 You're in! You'll start receiving deals soon.")
+        else:
+            print("⚠️ Skipped signup (missing information).")
 
-data_manager = DataManager()
-sheet_data = data_manager.get_destination_data()
-flight_search = FlightSearch()
-notification_manager = NotificationManager()
+def main():
+    load_dotenv()
 
-# Set your origin airport
-ORIGIN_CITY_IATA = "LON"
+    data_manager = DataManager()
+    flight_search = FlightSearch()
+    notifier = NotificationManager()
 
-# ==================== Update the Airport Codes in Google Sheet ====================
+    # 1) Optional: let a new user join from CLI
+    prompt_new_user(data_manager)
 
-for row in sheet_data:
-    if row["iataCode"] == "":
-        row["iataCode"] = flight_search.get_destination_code(row["city"])
-        # slowing down requests to avoid rate limit
-        time.sleep(2)
-print(f"sheet_data:\n {sheet_data}")
+    # 2) Get destinations (prices tab)
+    try:
+        destinations = data_manager.get_destinations()
+    except Exception as e:
+        print(f"❌ Could not fetch destinations from Sheety: {e}")
+        return
 
-data_manager.destination_data = sheet_data
-data_manager.update_destination_codes()
+    # 3) Fill IATA codes if missing
+    for row in destinations:
+        if not row.get("iataCode"):
+            code = flight_search.get_iata(row["city"])
+            if code:
+                try:
+                    data_manager.update_iata_code(row["id"], code)
+                    row["iataCode"] = code
+                    print(f"✔ Filled IATA for {row['city']}: {code}")
+                except Exception as e:
+                    print(f"⚠️ Failed to update IATA for {row['city']}: {e}")
+            else:
+                print(f"⚠️ Could not find IATA for {row['city']}")
 
-# ==================== Search for Flights and Send Notifications ====================
+    # 4) Get users list (emails)
+    try:
+        users = data_manager.get_users()
+        emails = [u["email"] for u in users if u.get("email")]
+    except Exception as e:
+        print(f"❌ Could not fetch users: {e}")
+        emails = []
 
-tomorrow = datetime.now() + timedelta(days=1)
-six_month_from_today = datetime.now() + timedelta(days=(6 * 30))
+    if not emails:
+        print("ℹ️ No users found to notify (add some via CLI next run).")
 
-for destination in sheet_data:
-    print(f"Getting flights for {destination['city']}...")
-    flights = flight_search.check_flights(
-        ORIGIN_CITY_IATA,
-        destination["iataCode"],
-        from_time=tomorrow,
-        to_time=six_month_from_today
-    )
-    cheapest_flight = find_cheapest_flight(flights)
-    print(f"{destination['city']}: £{cheapest_flight.price}")
-    # Slowing down requests to avoid rate limit
-    time.sleep(2)
+    # 5) Search flights & notify when below threshold
+    home_iata = os.getenv("HOME_IATA", "DEL")
+    months_ahead = int(os.getenv("SEARCH_MONTHS_AHEAD", "6"))
+    min_nights = int(os.getenv("MIN_NIGHTS", "7"))
+    max_nights = int(os.getenv("MAX_NIGHTS", "28"))
 
-    if cheapest_flight.price != "N/A" and cheapest_flight.price < destination["lowestPrice"]:
-        print(f"Lower price flight found to {destination['city']}!")
-        # notification_manager.send_sms(
-        #     message_body=f"Low price alert! Only £{cheapest_flight.price} to fly "
-        #                  f"from {cheapest_flight.origin_airport} to {cheapest_flight.destination_airport}, "
-        #                  f"on {cheapest_flight.out_date} until {cheapest_flight.return_date}."
-        # )
-        # SMS not working? Try whatsapp instead.
-        notification_manager.send_whatsapp(
-            message_body=f"Low price alert! Only £{cheapest_flight.price} to fly "
-                         f"from {cheapest_flight.origin_airport} to {cheapest_flight.destination_airport}, "
-                         f"on {cheapest_flight.out_date} until {cheapest_flight.return_date}."
+    for row in destinations:
+        dest_code = row.get("iataCode")
+        if not dest_code:
+            continue
+
+        target = float(row.get("lowestPrice", 0))
+        result = flight_search.search_flight(
+            fly_from=home_iata,
+            fly_to=dest_code,
+            months_ahead=months_ahead,
+            nights_in_dst_from=min_nights,
+            nights_in_dst_to=max_nights
         )
 
+        if not result:
+            print(f"— No results for {row['city']} ({dest_code})")
+            continue
 
+        price = float(result["price"])
+        if price <= target:
+            msg = (
+                f"✈️ Low price alert! {flight_search.currency} {price} from "
+                f"{result['origin_city']} ({result['origin_airport']}) to "
+                f"{result['destination_city']} ({result['destination_airport']}).\n"
+                f"Dates: {result['out_date']} → {result['return_date']}\n"
+                f"Book: {result['deep_link'] or '(Open Kiwi app/site)'}"
+            )
+            notifier.send_emails(emails, msg)
+        else:
+            print(f"Price high for {row['city']}: found {flight_search.currency} {price} (limit {target})")
+
+if __name__ == "__main__":
+    main()
