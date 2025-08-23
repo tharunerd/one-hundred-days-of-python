@@ -67,7 +67,7 @@ workout-tracker/
 │
 ├── main.py               # Main script to run the tracker
 ├── .env                  # Google Sheets API credentials
-├── requirements.txt      # Python dependencies
+├── CREDENTIALS.JSON      # Python dependencies
 └── README.md             # Project documentation
 ```
 
