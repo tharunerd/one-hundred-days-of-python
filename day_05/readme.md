@@ -11,7 +11,6 @@ The project helped me practice:
 - String concatenation and list manipulation
 
 ---
-
 ## 🛠 Features
 
 - Generates passwords with:
