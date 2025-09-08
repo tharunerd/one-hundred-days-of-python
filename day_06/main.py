@@ -9,6 +9,7 @@ def calculate_sum(a, b):
     """Function to calculate the sum of two numbers."""
     return a + b
 def main():
+    
     """Main function to execute the program."""
     user_name = input("Enter your name: ")
     greet_user(user_name)
