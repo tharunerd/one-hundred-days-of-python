@@ -3,7 +3,7 @@
 ## 📌 Project Description
 
 On Day 4 of the Python 100 Days Bootcamp, I built a simple **Rock, Paper, Scissors** game. This is a classic game where a user competes against the computer.
-
+  
 The project helped me understand:
 - Python Lists
 - Random module
